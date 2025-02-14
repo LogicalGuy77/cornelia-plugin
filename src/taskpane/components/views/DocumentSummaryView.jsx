@@ -1,22 +1,36 @@
-import React from 'react';
-import { Typography, Alert, Spin, Card, Space, Button, Tooltip, message } from 'antd';
-import { FileSearchOutlined, CopyOutlined, LikeOutlined, DislikeOutlined } from '@ant-design/icons';
+import React from "react";
+import {
+  Typography,
+  Alert,
+  Spin,
+  Card,
+  Space,
+  Button,
+  Tooltip,
+  message,
+} from "antd";
+import {
+  FileSearchOutlined,
+  CopyOutlined,
+  LikeOutlined,
+  DislikeOutlined,
+} from "@ant-design/icons";
 
 const { Paragraph, Title } = Typography;
 
-const DocumentSummary = ({ 
-  documentContent, 
-  summary, 
+const DocumentSummary = ({
+  documentContent,
+  summary,
   isLoading,
   progress,
-  error
+  error,
 }) => {
   const handleCopy = () => {
     const selection = window.getSelection();
     const range = document.createRange();
-    
+
     // Create a temporary container with clean styling
-    const tempContainer = document.createElement('div');
+    const tempContainer = document.createElement("div");
     tempContainer.style.cssText = `
       position: fixed;
       left: -9999px;
@@ -26,39 +40,42 @@ const DocumentSummary = ({
       font-size: 14px;
       white-space: pre-wrap;
     `;
-    
+
     // Clean and format the content with explicit black text
     tempContainer.innerHTML = summary
-      .split('\n')
-      .map(line => {
+      .split("\n")
+      .map((line) => {
         const parts = line.split(/(\*\*.*?\*\*)/g);
         return parts
-          .map(part => {
-            if (part.startsWith('**') && part.endsWith('**')) {
+          .map((part) => {
+            if (part.startsWith("**") && part.endsWith("**")) {
               // Force black color for bold text
-              return `<strong style="font-weight: bold; color: black !important; background: none;">${part.slice(2, -2)}</strong>`;
+              return `<strong style="font-weight: bold; color: black !important; background: none;">${part.slice(
+                2,
+                -2
+              )}</strong>`;
             }
             // Force black color for regular text
             return `<span style="color: black !important;">${part}</span>`;
           })
-          .join('');
+          .join("");
       })
-      .join('<br>');
-    
+      .join("<br>");
+
     document.body.appendChild(tempContainer);
-    
+
     try {
       range.selectNodeContents(tempContainer);
       selection.removeAllRanges();
       selection.addRange(range);
-      
-      const successful = document.execCommand('copy');
+
+      const successful = document.execCommand("copy");
       if (successful) {
-        message.success('Content copied successfully');
+        message.success("Content copied successfully");
       }
     } catch (err) {
-      console.error('Failed to copy content:', err);
-      message.error('Failed to copy content');
+      console.error("Failed to copy content:", err);
+      message.error("Failed to copy content");
     } finally {
       selection.removeAllRanges();
       document.body.removeChild(tempContainer);
@@ -67,12 +84,14 @@ const DocumentSummary = ({
 
   const renderContent = (text) => {
     if (!text) return null;
-    
-    return text.split('**').map((part, i) => 
+
+    return text.split("**").map((part, i) =>
       i % 2 === 0 ? (
         <span key={i}>{part}</span>
       ) : (
-        <span key={i} className="font-bold text-blue-600">{part}</span>
+        <span key={i} className="font-bold text-blue-600">
+          {part}
+        </span>
       )
     );
   };
@@ -87,17 +106,19 @@ const DocumentSummary = ({
         <div className="loading-container">
           <Space direction="vertical" align="center">
             <Spin size="large" />
-            <Title level={4} className="text-gray-500">Analyzing Document</Title>
+            <Title level={4} className="text-gray-500">
+              Analyzing Document
+            </Title>
             <Paragraph className="text-gray-400">
               Generating summary... {progress}%
             </Paragraph>
           </Space>
         </div>
       ) : summary ? (
-        <Card 
+        <Card
           className="summary-card"
           bordered={false}
-          bodyStyle={{ padding: '24px' }}
+          bodyStyle={{ padding: "24px" }}
         >
           <Paragraph className="text-gray-700 text-base leading-relaxed whitespace-pre-wrap">
             {renderContent(summary)}
@@ -105,23 +126,17 @@ const DocumentSummary = ({
 
           <div className="flex justify-end mt-4 space-x-2 border-t pt-4">
             <Tooltip title="Copy Summary">
-              <Button 
+              <Button
                 icon={<CopyOutlined />}
                 onClick={handleCopy}
                 type="text"
               />
             </Tooltip>
             <Tooltip title="Helpful">
-              <Button 
-                icon={<LikeOutlined />}
-                type="text"
-              />
+              <Button icon={<LikeOutlined />} type="text" />
             </Tooltip>
             <Tooltip title="Not Helpful">
-              <Button 
-                icon={<DislikeOutlined />}
-                type="text"
-              />
+              <Button icon={<DislikeOutlined />} type="text" />
             </Tooltip>
           </div>
         </Card>
@@ -130,4 +145,4 @@ const DocumentSummary = ({
   );
 };
 
-export default DocumentSummary; 
+export default DocumentSummary;
