@@ -65,6 +65,11 @@ const HomeView = ({
   handleBrainstormSubmit,
   documentContent,
 }) => {
+  console.log("HomeView - selectedText:", selectedText);
+  console.log("HomeView - selectedText type:", typeof selectedText);
+  console.log("HomeView - selectedText length:", selectedText?.length);
+  console.log("HomeView - selectedText empty:", !selectedText);
+
   return (
     <div className="flex flex-col h-full space-y-4 py-4">
       {/* Summary & Chat Card */}

@@ -78,6 +78,7 @@ const MainContent = memo(
     brainstormLoading,
     handleBrainstormSubmit,
   }) => {
+    console.log("MainContent - selectedText:", selectedText); // Debug log
     switch (activeView) {
       case "summary":
         return (
