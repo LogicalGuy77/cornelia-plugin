@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { performAnalysis } from "../../api";
 
 export const useSummary = (documentContent) => {
@@ -8,6 +8,10 @@ export const useSummary = (documentContent) => {
   const [summaryError, setSummaryError] = useState(null);
   const [homeSummaryLoading, setHomeSummaryLoading] = useState(false);
   const [homeSummaryReady, setHomeSummaryReady] = useState(false);
+
+  // useEffect(() => {
+  //   console.log("Updated Summary:", summary);
+  // }, [summary]);
 
   // Common function for generating summary
   const generateSummary = async (setLoading, setReady = () => {}) => {
@@ -47,7 +51,7 @@ export const useSummary = (documentContent) => {
   };
 
   const handleHomeSummaryClick = () => {
-    if (homeSummaryReady) return;
+    if (homeSummaryReady || summary) return; // Avoid redundant API calls
 
     generateSummary(setHomeSummaryLoading, () => setHomeSummaryReady(true));
   };

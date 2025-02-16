@@ -8,15 +8,19 @@ import {
   Button,
   Tooltip,
   message,
+  Progress,
 } from "antd";
 import {
   FileSearchOutlined,
   CopyOutlined,
   LikeOutlined,
   DislikeOutlined,
+  ArrowLeftOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 
 const { Paragraph, Title } = Typography;
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 const DocumentSummary = ({
   documentContent,
@@ -24,6 +28,7 @@ const DocumentSummary = ({
   isLoading,
   progress,
   error,
+  setActiveView,
 }) => {
   const handleCopy = () => {
     const selection = window.getSelection();
@@ -96,51 +101,117 @@ const DocumentSummary = ({
     );
   };
 
-  return (
-    <div className="p-4">
-      {error && (
-        <Alert message={error} type="error" showIcon className="mb-4" />
-      )}
-
-      {isLoading ? (
-        <div className="loading-container">
-          <Space direction="vertical" align="center">
-            <Spin size="large" />
-            <Title level={4} className="text-gray-500">
-              Analyzing Document
-            </Title>
-            <Paragraph className="text-gray-400">
-              Generating summary... {progress}%
-            </Paragraph>
-          </Space>
-        </div>
-      ) : summary ? (
-        <Card
-          className="summary-card"
-          bordered={false}
-          bodyStyle={{ padding: "24px" }}
-        >
-          <Paragraph className="text-gray-700 text-base leading-relaxed whitespace-pre-wrap">
-            {renderContent(summary)}
+  const handleBack = () => {
+    setActiveView("home");
+  };
+  const renderLoadingState = () => (
+    <div className="flex flex-col items-center justify-center py-12">
+      <Space direction="vertical" align="center" size="large">
+        <Spin indicator={antIcon} />
+        <div className="text-center">
+          <Title level={4} className="text-gray-500 mb-2">
+            Analyzing Document
+          </Title>
+          <Paragraph className="text-gray-400 mb-4">
+            This may take a few moments...
           </Paragraph>
-
-          <div className="flex justify-end mt-4 space-x-2 border-t pt-4">
-            <Tooltip title="Copy Summary">
-              <Button
-                icon={<CopyOutlined />}
-                onClick={handleCopy}
-                type="text"
+          {progress > 0 ? (
+            <div className="w-64">
+              <Progress
+                percent={progress}
+                status="active"
+                strokeColor={{
+                  "0%": "#108ee9",
+                  "100%": "#87d068",
+                }}
               />
-            </Tooltip>
-            <Tooltip title="Helpful">
-              <Button icon={<LikeOutlined />} type="text" />
-            </Tooltip>
-            <Tooltip title="Not Helpful">
-              <Button icon={<DislikeOutlined />} type="text" />
-            </Tooltip>
+            </div>
+          ) : (
+            <div className="w-64">
+              <Progress
+                percent={100}
+                status="active"
+                strokeColor="#108ee9"
+                className="opacity-50"
+              />
+            </div>
+          )}
+        </div>
+      </Space>
+    </div>
+  );
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Header with back button */}
+      <div className="p-4 border-b border-gray-100">
+        <div className="flex items-center gap-3">
+          <Button
+            type="text"
+            icon={<ArrowLeftOutlined />}
+            onClick={handleBack}
+            className="!text-gray-500 hover:!text-gray-700"
+          />
+          <Title level={4} className="m-0">
+            Document Summary
+          </Title>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="flex-1 overflow-auto p-4">
+        {error && (
+          <Alert
+            message="Summary Generation Failed"
+            description={error}
+            type="error"
+            showIcon
+            className="mb-4"
+          />
+        )}
+
+        {isLoading || (!summary && !error) ? (
+          renderLoadingState()
+        ) : summary ? (
+          <Card
+            className="summary-card"
+            bordered={false}
+            bodyStyle={{ padding: "24px" }}
+          >
+            <Paragraph className="text-gray-700 text-base leading-relaxed whitespace-pre-wrap">
+              {renderContent(summary)}
+            </Paragraph>
+
+            <div className="flex justify-end mt-4 space-x-2 border-t pt-4">
+              <Tooltip title="Copy Summary">
+                <Button
+                  icon={<CopyOutlined />}
+                  onClick={handleCopy}
+                  type="text"
+                />
+              </Tooltip>
+              <Tooltip title="Helpful">
+                <Button icon={<LikeOutlined />} type="text" />
+              </Tooltip>
+              <Tooltip title="Not Helpful">
+                <Button icon={<DislikeOutlined />} type="text" />
+              </Tooltip>
+            </div>
+          </Card>
+        ) : (
+          <div className="text-center py-12">
+            <Space direction="vertical" align="center">
+              <FileSearchOutlined className="text-4xl text-gray-300" />
+              <Title level={4} className="text-gray-500">
+                No Summary Available
+              </Title>
+              <Paragraph className="text-gray-400">
+                Please generate a summary first
+              </Paragraph>
+            </Space>
           </div>
-        </Card>
-      ) : null}
+        )}
+      </div>
     </div>
   );
 };

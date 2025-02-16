@@ -38,7 +38,7 @@ const AppContent = () => {
     homeSummaryReady,
     handleGenerateSummary,
     handleHomeSummaryClick,
-  } = useSummary(documentContent);
+  } = useSummary(documentContent, setActiveView);
 
   const {
     chatMessages,
@@ -120,7 +120,6 @@ const AppContent = () => {
         selection.load("text");
         await context.sync();
         const selectedContent = selection.text.trim();
-        console.log("Selected text:", selectedContent); // Debug log
         setSelectedText(selectedContent);
       });
     } catch (error) {
