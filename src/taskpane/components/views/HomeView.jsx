@@ -1,5 +1,15 @@
 import React from "react";
-import { Button, Typography, Spin, Select, Tag, Modal, Input } from "antd";
+import {
+  Button,
+  Typography,
+  Spin,
+  Select,
+  Tag,
+  Modal,
+  Input,
+  message,
+} from "antd";
+import { logger } from "../../../api";
 import {
   FileSearchOutlined,
   MessageOutlined,
@@ -21,6 +31,7 @@ import {
   ChatSection,
   ActionPanelSection,
   DocumentCommentSection,
+  AnalysisCard,
 } from "../sections";
 import {
   ExplanationPreview,
@@ -29,6 +40,7 @@ import {
 } from "../previews";
 import { RedraftModal, BrainStormModal } from "../modals";
 import { analyzeDocumentClauses } from "../../../api";
+import { HARDCODED_ANALYSIS } from "../constants/analysisData";
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -63,6 +75,9 @@ const HomeView = ({
   parties,
   getTagColor,
   selectedParty,
+  setSelectedParty,
+  setClauseAnalysisLoading,
+  setClauseAnalysisCounts,
   clauseAnalysisCounts,
   comments,
   setComments,
@@ -77,6 +92,7 @@ const HomeView = ({
   brainstormLoading,
   handleBrainstormSubmit,
   documentContent,
+  setClauseAnalysis,
 }) => {
   return (
     <div className="flex flex-col h-full space-y-4 py-4">
@@ -265,7 +281,7 @@ const HomeView = ({
                             );
                           }
 
-                          // const parsedResult = HARDCODED_ANALYSIS;
+                          parsedResult = HARDCODED_ANALYSIS;
 
                           // Store the parsed result
                           setClauseAnalysis(parsedResult);

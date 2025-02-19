@@ -1,56 +1,67 @@
-import axios from 'axios';
-import { getTokens, clearTokens, isTokenExpired } from './taskpane/services/auth';
+import axios from "axios";
+import {
+  getTokens,
+  clearTokens,
+  isTokenExpired,
+} from "./taskpane/services/auth";
 
 // const BASE_URL = 'https://127.0.0.1:8000/api';
-const BASE_URL = 'https://cornelialegal.ai/api';
+const BASE_URL = "https://cornelialegal.ai/api";
 
 // Create a debug output div with better styling
-const createDebugDiv = () => {
-  const div = document.createElement('div');
-  div.id = 'debug-output';
-  div.style.cssText = `
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    width: 400px;
-    max-height: 300px;
-    overflow-y: auto;
-    background-color: rgba(0, 0, 0, 0.9);
-    color: #fff;
-    padding: 10px;
-    font-family: monospace;
-    font-size: 12px;
-    z-index: 9999;
-    border-top-left-radius: 8px;
-    box-shadow: -2px -2px 10px rgba(0, 0, 0, 0.2);
-  `;
-  document.body.appendChild(div);
-  return div;
-};
+// const createDebugDiv = () => {
+//   const div = document.createElement("div");
+//   div.id = "debug-output";
+//   div.style.cssText = `
+//     position: fixed;
+//     bottom: 0;
+//     right: 0;
+//     width: 400px;
+//     max-height: 300px;
+//     overflow-y: auto;
+//     background-color: rgba(0, 0, 0, 0.9);
+//     color: #fff;
+//     padding: 10px;
+//     font-family: monospace;
+//     font-size: 12px;
+//     z-index: 9999;
+//     border-top-left-radius: 8px;
+//     box-shadow: -2px -2px 10px rgba(0, 0, 0, 0.2);
+//   `;
+//   document.body.appendChild(div);
+//   return div;
+// };
 
 // Enhanced debug logger with better formatting
 const createDebugger = (namespace) => {
   const getColorForNamespace = (ns) => {
     switch (ns) {
-      case 'app:api:info': return '#3498db';  // blue
-      case 'app:api:error': return '#e74c3c'; // red
-      case 'app:api:warn': return '#f1c40f';  // yellow
-      case 'app:api:debug': return '#2ecc71'; // green
-      default: return '#fff';
+      case "app:api:info":
+        return "#3498db"; // blue
+      case "app:api:error":
+        return "#e74c3c"; // red
+      case "app:api:warn":
+        return "#f1c40f"; // yellow
+      case "app:api:debug":
+        return "#2ecc71"; // green
+      default:
+        return "#fff";
     }
   };
 
   return (...args) => {
     const timestamp = new Date().toISOString();
     const color = getColorForNamespace(namespace);
-    
+
     // Format the arguments
-    const formattedArgs = args.map(arg => {
-      if (typeof arg === 'object') {
-        return JSON.stringify(arg, null, 2);
-      }
-      return arg;
-    }).join(' ');
+    const formattedArgs = args
+      .map((arg) => {
+        if (typeof arg === "object") {
+          return JSON.stringify(arg, null, 2);
+        }
+        return arg;
+      })
+      .join(" ");
 
     // Create formatted message
     const logMessage = `
@@ -60,23 +71,24 @@ const createDebugger = (namespace) => {
         <div style="color: #fff; white-space: pre-wrap;">${formattedArgs}</div>
       </div>
     `;
-    
+
     // Console output
     console.log(`[${timestamp}] [${namespace}]`, ...args);
-    
+
     // Debug div output
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       try {
-        const debugDiv = document.getElementById('debug-output') || createDebugDiv();
-        debugDiv.insertAdjacentHTML('afterbegin', logMessage);
-        
+        const debugDiv =
+          document.getElementById("debug-output") || createDebugDiv();
+        debugDiv.insertAdjacentHTML("afterbegin", logMessage);
+
         // Keep only last 100 logs
         const logs = debugDiv.children;
         if (logs.length > 100) {
           debugDiv.removeChild(logs[logs.length - 1]);
         }
       } catch (e) {
-        console.warn('Debug div creation failed:', e);
+        console.warn("Debug div creation failed:", e);
       }
     }
   };
@@ -84,15 +96,15 @@ const createDebugger = (namespace) => {
 
 // Export the logger
 export const logger = {
-  info: createDebugger('app:api:info'),
-  error: createDebugger('app:api:error'),
-  warn: createDebugger('app:api:warn'),
-  debug: createDebugger('app:api:debug')
+  info: createDebugger("app:api:info"),
+  error: createDebugger("app:api:error"),
+  warn: createDebugger("app:api:warn"),
+  debug: createDebugger("app:api:debug"),
 };
 
 // Enable all loggers by default
 if (createDebugger.enable) {
-  createDebugger.enable('app:api:*');
+  createDebugger.enable("app:api:*");
 }
 
 // Create axios instance
@@ -108,7 +120,7 @@ api.interceptors.request.use(async (config) => {
     if (isTokenExpired(tokens.access)) {
       clearTokens();
       window.location.reload();
-      return Promise.reject('Session expired');
+      return Promise.reject("Session expired");
     }
     config.headers.Authorization = `Bearer ${tokens.access}`;
   }
@@ -128,65 +140,70 @@ api.interceptors.response.use(
 );
 
 // Debug interceptor
-api.interceptors.request.use(request => {
-  logger.info('Starting Request', {
+api.interceptors.request.use((request) => {
+  logger.info("Starting Request", {
     url: request.url,
     method: request.method,
-    headers: {...request.headers},  // Spread to avoid circular reference
-    baseURL: request.baseURL
+    headers: { ...request.headers }, // Spread to avoid circular reference
+    baseURL: request.baseURL,
   });
   return request;
 });
 
 api.interceptors.response.use(
-  response => {
-    logger.info('Response', {
+  (response) => {
+    logger.info("Response", {
       status: response.status,
-      headers: {...response.headers},  // Spread to avoid circular reference
-      data: response.data
+      headers: { ...response.headers }, // Spread to avoid circular reference
+      data: response.data,
     });
     return response;
   },
-  error => {
-    logger.error('Response Error', {
+  (error) => {
+    logger.error("Response Error", {
       message: error.message,
       status: error.response?.status,
       data: error.response?.data,
-      headers: error.response?.headers
+      headers: error.response?.headers,
     });
     return Promise.reject(error);
   }
 );
 
-export const performAnalysis = async (type, text, fileName, onProgress, signal) => {
+export const performAnalysis = async (
+  type,
+  text,
+  fileName,
+  onProgress,
+  signal
+) => {
   // logger.info(`🚀 Starting ${type} analysis for ${fileName}...`);
-  
+
   try {
     onProgress && onProgress(fileName, 0);
 
     const requestBody = {
       analysis_type: type,
       text: text,
-      include_history: type === 'ask'
+      include_history: type === "ask",
     };
 
     // logger.info('Request body: %O', requestBody);
 
-    const response = await api.post('/perform_analysis/', requestBody, {
+    const response = await api.post("/perform_analysis/", requestBody, {
       signal,
       onDownloadProgress: (progressEvent) => {
         const percentCompleted = Math.round(
           (progressEvent.loaded * 100) / progressEvent.total
         );
         onProgress && onProgress(fileName, percentCompleted);
-      }
+      },
     });
 
     // logger.info(`✅ ${type} analysis completed for ${fileName}: %O`, response.data);
     return response.data.success ? response.data.result : null;
-    
   } catch (error) {
-    if (error.name === 'AbortError' || error.name === 'CanceledError') {
+    if (error.name === "AbortError" || error.name === "CanceledError") {
       logger.warn(`🛑 ${type} analysis was manually aborted for ${fileName}`);
     } else {
       logger.error(`❌ Error in ${type} analysis for ${fileName}: %O`, error);
@@ -199,84 +216,100 @@ export const performAnalysis = async (type, text, fileName, onProgress, signal) 
 // Add a specific test function
 export const testEndpoint = async () => {
   try {
-    const response = await api.get('/profile/');
-    logger.info('Test successful: %O', response.data);
+    const response = await api.get("/profile/");
+    logger.info("Test successful: %O", response.data);
     return response.data;
   } catch (error) {
-    logger.error('Test failed: %O', error);
+    logger.error("Test failed: %O", error);
     throw error;
   }
 };
 
-export const replyToComment = async (comment, documentContent, instructions = '', replies = []) => {
+export const replyToComment = async (
+  comment,
+  documentContent,
+  instructions = "",
+  replies = []
+) => {
   try {
-    const response = await api.post('/reply_to_comment/', {
+    const response = await api.post("/reply_to_comment/", {
       comment,
       documentContent,
       instructions,
-      replies
+      replies,
     });
-    
+
     return response.data.success ? response.data.result : null;
   } catch (error) {
-    logger.error('Error in replying to comment: %O', error);
+    logger.error("Error in replying to comment: %O", error);
     throw error;
   }
 };
 
-export const redraftComment = async (comment, documentContent, selectedText, instructions = '', replies = []) => {
+export const redraftComment = async (
+  comment,
+  documentContent,
+  selectedText,
+  instructions = "",
+  replies = []
+) => {
   try {
-    const response = await api.post('/redraft_comment/', {
+    const response = await api.post("/redraft_comment/", {
       comment,
       documentContent,
       selectedText,
       instructions,
-      replies
+      replies,
     });
-    
+
     return response.data.success ? response.data.result : null;
   } catch (error) {
-    logger.error('Error in redrafting comment: %O', error);
+    logger.error("Error in redrafting comment: %O", error);
     throw error;
   }
 };
 
-export const redraftText = async (selectedText, documentContent, instructions = '') => {
+export const redraftText = async (
+  selectedText,
+  documentContent,
+  instructions = ""
+) => {
   try {
-    
-    const response = await api.post('/redraft_text/', {
+    const response = await api.post("/redraft_text/", {
       selectedText,
       documentContent,
-      instructions
+      instructions,
     });
-    
+
     return response.data.success ? response.data.result : null;
   } catch (error) {
-    logger.error('Error in redrafting text:', error);
+    logger.error("Error in redrafting text:", error);
     throw error;
   }
 };
 
 export const analyzeDocumentClauses = async (text, partyInfo = null) => {
-  try {  
+  try {
     const requestBody = {
       text: text,
-      partyInfo: partyInfo ? {
-        name: partyInfo.name,
-        role: partyInfo.role,
-      } : null
+      partyInfo: partyInfo
+        ? {
+            name: partyInfo.name,
+            role: partyInfo.role,
+          }
+        : null,
     };
 
-    const response = await api.post('/analyze_clauses/', requestBody);
+    const response = await api.post("/analyze_clauses/", requestBody);
 
     if (response.data.success) {
       return response.data.result;
     } else {
-      logger.warn('Clause analysis returned without success flag');
+      logger.warn("Clause analysis returned without success flag");
       return null;
     }
   } catch (error) {
-    logger.error('Error in clause analysis:', error);
+    logger.error("Error in clause analysis:", error);
     throw error;
   }
 };
@@ -293,54 +326,58 @@ export const analyzeDocumentClauses = async (text, partyInfo = null) => {
 
 export const analyzeParties = async (text) => {
   try {
-    const response = await api.post('/analyze_parties/', {
-      text: text
+    const response = await api.post("/analyze_parties/", {
+      text: text,
     });
     return response.data.success ? response.data.parties : null;
   } catch (error) {
-    logger.error('Error in party analysis:', error);
+    logger.error("Error in party analysis:", error);
     throw error;
   }
 };
 
 export const explainText = async (selectedText, contextText) => {
   try {
-
-    const response = await api.post('/explain_text/', {
+    const response = await api.post("/explain_text/", {
       selectedText,
-      contextText
+      contextText,
     });
 
     if (response.data && response.data) {
       return response.data;
     } else {
-      logger.error('Invalid response format:', response.data);
-      throw new Error('Invalid response format from server');
+      logger.error("Invalid response format:", response.data);
+      throw new Error("Invalid response format from server");
     }
   } catch (error) {
-    logger.error('Error in explain text:', error);
+    logger.error("Error in explain text:", error);
     throw error;
   }
 };
 
 // Add this new function for brainstorm chat
-export const brainstormChat = async (message, clauseText, analysis='', documentContent) => {
+export const brainstormChat = async (
+  message,
+  clauseText,
+  analysis = "",
+  documentContent
+) => {
   try {
-    const response = await api.post('/brainstorm_chat/', {
+    const response = await api.post("/brainstorm_chat/", {
       message,
       clauseText,
       analysis,
-      documentContent
+      documentContent,
     });
-    
+
     if (response.data.success) {
       return response.data.message;
     } else {
-      logger.warn('Brainstorm chat returned without success flag');
+      logger.warn("Brainstorm chat returned without success flag");
       return null;
     }
   } catch (error) {
-    logger.error('Error in brainstorm chat:', error);
+    logger.error("Error in brainstorm chat:", error);
     throw error;
   }
 };

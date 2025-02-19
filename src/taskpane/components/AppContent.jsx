@@ -354,7 +354,11 @@ const AppContent = () => {
           handleChatSubmit={handleChatSubmit}
           clauseAnalysisLoading={clauseAnalysisLoading}
           selectedParty={selectedParty}
+          setSelectedParty={setSelectedParty}
           clauseAnalysis={clauseAnalysis}
+          setClauseAnalysis={setClauseAnalysis}
+          setClauseAnalysisLoading={setClauseAnalysisLoading}
+          setClauseAnalysisCounts={setClauseAnalysisCounts}
           setActiveView={setActiveView}
           getTagColor={getTagColor}
           handleChangeParty={handleChangeParty}

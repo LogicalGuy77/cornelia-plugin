@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDocument } from "./useDocument";
+import { HARDCODED_PARTIES } from "../components/constants/analysisData";
 
 export const useParties = () => {
+  const { documentContent } = useDocument();
   const [parties, setParties] = useState([]);
   const [isLoadingParties, setIsLoadingParties] = useState(true);
   const [selectedParty, setSelectedParty] = useState(null);
@@ -18,6 +21,41 @@ export const useParties = () => {
 
     return roleColors[roleLower] || "default";
   };
+
+  // Extract parties from document content when it updates
+  useEffect(() => {
+    const extractParties = async () => {
+      setIsLoadingParties(true);
+      try {
+        // Simulating `analyzeParties` logic
+        const parsedResult = HARDCODED_PARTIES; // Replace with real parsing if needed
+
+        const partiesArray = Array.isArray(parsedResult)
+          ? parsedResult
+          : Array.isArray(parsedResult.parties)
+          ? parsedResult.parties
+          : [];
+
+        const validParties = partiesArray
+          .filter((party) => party && party.name)
+          .map((party) => ({
+            name: party.name,
+            role: party.role || "Unknown Role",
+          }));
+
+        setParties(validParties);
+      } catch (error) {
+        console.error("Error extracting parties:", error);
+        setParties([]);
+      } finally {
+        setIsLoadingParties(false);
+      }
+    };
+
+    if (documentContent) {
+      extractParties();
+    }
+  }, [documentContent]);
 
   return {
     parties,

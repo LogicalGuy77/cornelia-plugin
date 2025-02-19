@@ -27,7 +27,11 @@ const MainContent = ({
   handleChatSubmit,
   // Analysis view props
   clauseAnalysisLoading,
+  setClauseAnalysis,
   selectedParty,
+  setSelectedParty,
+  setClauseAnalysisLoading,
+  setClauseAnalysisCounts,
   clauseAnalysis,
   setActiveView,
   getTagColor,
@@ -117,7 +121,9 @@ const MainContent = ({
         <AnalysisView
           clauseAnalysisLoading={clauseAnalysisLoading}
           selectedParty={selectedParty}
+          setSelectedParty={setSelectedParty}
           clauseAnalysis={clauseAnalysis}
+          setClauseAnalysis={setClauseAnalysis}
           setActiveView={setActiveView}
           getTagColor={getTagColor}
           onChangeParty={handleChangeParty}
@@ -165,9 +171,13 @@ const MainContent = ({
           handleAddComment={handleAddComment}
           isAddingComment={isAddingComment}
           clauseAnalysis={clauseAnalysis}
+          setClauseAnalysis={setClauseAnalysis}
           isLoadingParties={isLoadingParties}
           clauseAnalysisLoading={clauseAnalysisLoading}
           parties={parties}
+          setSelectedParty={setSelectedParty}
+          setClauseAnalysisLoading={setClauseAnalysisLoading}
+          setClauseAnalysisCounts={setClauseAnalysisCounts}
           getTagColor={getTagColor}
           selectedParty={selectedParty}
           clauseAnalysisCounts={clauseAnalysisCounts}

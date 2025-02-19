@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import CommentList from "../views/CommentListView";
+import CommentListView from "../views/CommentListView";
 
 const DocumentCommentSection = ({
   comments,
@@ -15,7 +15,7 @@ const DocumentCommentSection = ({
           Document Comments
         </h3>
         <div className="comments-scroll-container">
-          <CommentList
+          <CommentListView
             comments={comments}
             setComments={setComments}
             initialResolvedComments={initialResolvedComments}

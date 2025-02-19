@@ -6,11 +6,36 @@ import ClauseAnalysis from "../ClauseAnalysis";
 const { Text } = Typography;
 
 const AnalysisView = ({
+  // Loading and party state
   clauseAnalysisLoading,
   selectedParty,
+  setSelectedParty,
   clauseAnalysis,
+  setClauseAnalysis,
   setActiveView,
-  ...props // All other ClauseAnalysis props
+  getTagColor,
+  onChangeParty,
+
+  // Redraft modal props
+  isRedraftModalVisible,
+  redraftContent,
+  selectedClause,
+  generatedRedraft,
+  generatingRedrafts,
+
+  // Redraft state props
+  redraftedClauses,
+  redraftedTexts,
+  redraftReviewStates,
+
+  // Redraft handlers
+  onRedraftModalVisibility,
+  onRedraftContentChange,
+  onSelectedClauseChange,
+  onGeneratingRedraftsChange,
+  onRedraftedClausesChange,
+  onRedraftedTextsChange,
+  onRedraftReviewStatesChange,
 }) => {
   return (
     <div className="p-4">
@@ -37,7 +62,23 @@ const AnalysisView = ({
           results={clauseAnalysis}
           loading={clauseAnalysisLoading}
           selectedParty={selectedParty}
-          {...props}
+          getTagColor={getTagColor}
+          onChangeParty={onChangeParty}
+          isRedraftModalVisible={isRedraftModalVisible}
+          redraftContent={redraftContent}
+          selectedClause={selectedClause}
+          generatedRedraft={generatedRedraft}
+          generatingRedrafts={generatingRedrafts}
+          redraftedClauses={redraftedClauses}
+          redraftedTexts={redraftedTexts}
+          redraftReviewStates={redraftReviewStates}
+          onRedraftModalVisibility={onRedraftModalVisibility}
+          onRedraftContentChange={onRedraftContentChange}
+          onSelectedClauseChange={onSelectedClauseChange}
+          onGeneratingRedraftsChange={onGeneratingRedraftsChange}
+          onRedraftedClausesChange={onRedraftedClausesChange}
+          onRedraftedTextsChange={onRedraftedTextsChange}
+          onRedraftReviewStatesChange={onRedraftReviewStatesChange}
         />
       )}
     </div>

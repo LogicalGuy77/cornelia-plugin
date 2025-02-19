@@ -1,22 +1,22 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Button, Modal, Input, message, Tooltip } from 'antd';
+import React, { useState, useCallback, useRef, useEffect } from "react";
+import { Button, Modal, Input, message, Tooltip } from "antd";
 import {
   EditOutlined,
   MessageOutlined,
   CloseCircleOutlined,
   CheckCircleOutlined,
-  SyncOutlined
-} from '@ant-design/icons';
-import { replyToComment, redraftComment } from '../../api';
-import { searchAndReplaceText } from '../utils/wordUtils';
-import {logger} from '../../api';
+  SyncOutlined,
+} from "@ant-design/icons";
+import { replyToComment, redraftComment } from "../../api";
+import { searchAndReplaceText } from "../utils/wordUtils";
+import { logger } from "../../api";
 const { TextArea } = Input;
 
 const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
   const [isRedraftModalVisible, setIsRedraftModalVisible] = useState(false);
   const [isAIReplyModalVisible, setIsAIReplyModalVisible] = useState(false);
-  const [redraftContent, setRedraftContent] = useState('');
-  const [aiReplyContent, setAIReplyContent] = useState('');
+  const [redraftContent, setRedraftContent] = useState("");
+  const [aiReplyContent, setAIReplyContent] = useState("");
   const [isGeneratingReply, setIsGeneratingReply] = useState(false);
   const [isGeneratingRedraft, setIsGeneratingRedraft] = useState(false);
   const [generatedReply, setGeneratedReply] = useState(null);
@@ -48,12 +48,12 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
 
   const handleAIReply = async () => {
     if (!comment) return;
-    
+
     try {
       setIsGeneratingReply(true);
       setIsAIReplyModalVisible(false);
-      setAIReplyContent('');
-      
+      setAIReplyContent("");
+
       const documentContent = await Word.run(async (context) => {
         const body = context.document.body;
         body.load("text");
@@ -72,7 +72,7 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
         setGeneratedReply(result);
       }
     } catch (error) {
-      message.error('Failed to generate reply: ' + error.message);
+      message.error("Failed to generate reply: " + error.message);
     } finally {
       setIsGeneratingReply(false);
     }
@@ -85,9 +85,9 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
         comments.load("items");
         await context.sync();
 
-        const targetComment = comments.items.find(c => c.id === comment.id);
+        const targetComment = comments.items.find((c) => c.id === comment.id);
         if (!targetComment) {
-          throw new Error('Comment not found');
+          throw new Error("Comment not found");
         }
 
         targetComment.replies.load();
@@ -104,21 +104,24 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
         const updatedComment = {
           ...comment,
           resolved: true,
-          replies: [...(comment.replies || []), {
-            id: newReply.id,
-            content: generatedReply,
-            author: newReply.authorName || 'Unknown Author',
-            date: new Date().toISOString()
-          }]
+          replies: [
+            ...(comment.replies || []),
+            {
+              id: newReply.id,
+              content: generatedReply,
+              author: newReply.authorName || "Unknown Author",
+              date: new Date().toISOString(),
+            },
+          ],
         };
-        
+
         onCommentUpdate(updatedComment);
         setGeneratedReply(null);
-        message.success('Reply added and comment resolved');
+        message.success("Reply added and comment resolved");
       });
     } catch (error) {
-      console.error('Error adding reply:', error);
-      message.error('Failed to add reply: ' + error.message);
+      console.error("Error adding reply:", error);
+      message.error("Failed to add reply: " + error.message);
     }
   }, [comment, generatedReply, onCommentUpdate]);
 
@@ -133,23 +136,23 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
 
   const handleRedraft = async () => {
     if (!comment) return;
-    
+
     try {
       setIsGeneratingRedraft(true);
       setIsRedraftModalVisible(false);
-      setRedraftContent('');
-      
+      setRedraftContent("");
+
       await Word.run(async (context) => {
         const body = context.document.body;
         body.load("text");
-        
+
         const comments = context.document.body.getComments();
         comments.load("items");
         await context.sync();
 
-        const targetComment = comments.items.find(c => c.id === comment.id);
+        const targetComment = comments.items.find((c) => c.id === comment.id);
         if (!targetComment) {
-          throw new Error('Comment not found');
+          throw new Error("Comment not found");
         }
 
         const contentRange = targetComment.getRange();
@@ -170,24 +173,24 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
         if (result) {
           setGeneratedRedraft({
             text: result,
-            range: contentRange
+            range: contentRange,
           });
         }
       });
     } catch (error) {
-      console.error('Error redrafting:', error);
-      message.error('Failed to redraft: ' + error.message);
+      console.error("Error redrafting:", error);
+      message.error("Failed to redraft: " + error.message);
     } finally {
       setIsGeneratingRedraft(false);
     }
   };
 
   const handleKeyPress = (e, action) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (action === 'aiReply') {
+      if (action === "aiReply") {
         handleAIReply();
-      } else if (action === 'redraft') {
+      } else if (action === "redraft") {
         handleRedraft();
       }
     }
@@ -195,43 +198,46 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
 
   const handleAcceptRedraft = async () => {
     try {
-        await Word.run(async (context) => {
-            const comments = context.document.body.getComments();
-            comments.load("items");
-            await context.sync();
+      await Word.run(async (context) => {
+        const comments = context.document.body.getComments();
+        comments.load("items");
+        await context.sync();
 
-            const targetComment = comments.items.find(c => c.id === comment.id);
-            if (!targetComment) {
-                throw new Error('Comment not found');
-            }
+        const targetComment = comments.items.find((c) => c.id === comment.id);
+        if (!targetComment) {
+          throw new Error("Comment not found");
+        }
 
-            // Get the comment's range and load its properties
-            const contentRange = targetComment.getRange();
-            contentRange.load(["text", "start", "end"]);
-            await context.sync();
+        // Get the comment's range and load its properties
+        const contentRange = targetComment.getRange();
+        contentRange.load(["text", "start", "end"]);
+        await context.sync();
 
-            // Insert the generated redraft text into the comment's range
-            contentRange.insertText(generatedRedraft.text, Word.InsertLocation.replace);
+        // Insert the generated redraft text into the comment's range
+        contentRange.insertText(
+          generatedRedraft.text,
+          Word.InsertLocation.replace
+        );
 
-            // Store range information for undo tracking
-            setRedraftRangeTracking({
-                originalText: contentRange.text,
-                originalStart: contentRange.start,
-                originalEnd: contentRange.end,
-                newStart: contentRange.start, // Updated to reflect actual start after insertion
-                newEnd: contentRange.start + generatedRedraft.text.length, // Calculate new end
-                commentId: comment.id
-            });
-
-            await context.sync();
-            setGeneratedRedraft(null);
-            message.success('Text redrafted successfully');
+        // Store range information for undo tracking
+        setRedraftRangeTracking({
+          originalText: contentRange.text,
+          originalStart: contentRange.start,
+          originalEnd: contentRange.end,
+          newStart: contentRange.start, // Updated to reflect actual start after insertion
+          newEnd: contentRange.start + generatedRedraft.text.length, // Calculate new end
+          commentId: comment.id,
         });
+
+        await context.sync();
+        setGeneratedRedraft(null);
+        message.success("Text redrafted successfully");
+      });
     } catch (error) {
-        console.error('Error applying redraft:', error);
-        message.error('Failed to apply redraft: ' + error.message);
+      console.error("Error applying redraft:", error);
+      message.error("Failed to apply redraft: " + error.message);
     }
-};
+  };
 
   const handleRejectRedraft = () => {
     setGeneratedRedraft(null);
@@ -247,33 +253,33 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
       // First redraft the text using the existing handler
       // This will set up the redraftRangeTracking
       await handleAcceptRedraft();
-      
+
       await Word.run(async (context) => {
         const comments = context.document.body.getComments();
         comments.load("items");
         await context.sync();
 
-        const targetComment = comments.items.find(c => c.id === comment.id);
+        const targetComment = comments.items.find((c) => c.id === comment.id);
         if (!targetComment) {
-          throw new Error('Comment not found');
+          throw new Error("Comment not found");
         }
 
         // Then resolve the comment
         targetComment.resolved = true;
         await context.sync();
-        
+
         // Update UI state through CommentList with the new content
-        onCommentUpdate({ 
-          ...comment, 
+        onCommentUpdate({
+          ...comment,
           resolved: true,
-          content: generatedRedraft.text // Store the updated content
+          content: generatedRedraft.text, // Store the updated content
         });
-        
-        message.success('Text redrafted and comment resolved');
+
+        message.success("Text redrafted and comment resolved");
       });
     } catch (error) {
-      console.error('Error in accept and resolve:', error);
-      message.error('Failed to redraft and resolve: ' + error.message);
+      console.error("Error in accept and resolve:", error);
+      message.error("Failed to redraft and resolve: " + error.message);
       // Clear tracking state on error
       setRedraftRangeTracking(null);
       setGeneratedRedraft(null);
@@ -287,8 +293,8 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
       // Then open the reply modal and set a flag to resolve after reply
       setIsAIReplyModalVisible(true);
     } catch (error) {
-      console.error('Error in accept and comment:', error);
-      message.error('Failed to redraft and open comment: ' + error.message);
+      console.error("Error in accept and comment:", error);
+      message.error("Failed to redraft and open comment: " + error.message);
     }
   };
 
@@ -299,9 +305,9 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
         comments.load("items");
         await context.sync();
 
-        const targetComment = comments.items.find(c => c.id === comment.id);
+        const targetComment = comments.items.find((c) => c.id === comment.id);
         if (!targetComment) {
-          throw new Error('Comment not found');
+          throw new Error("Comment not found");
         }
 
         const newReply = targetComment.reply(aiReplyContent);
@@ -315,28 +321,31 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
         const updatedComment = {
           ...comment,
           resolved: true,
-          replies: [...(comment.replies || []), {
-            id: newReply.id,
-            content: aiReplyContent,
-            author: newReply.authorName || 'Unknown Author',
-            date: new Date().toISOString()
-          }]
+          replies: [
+            ...(comment.replies || []),
+            {
+              id: newReply.id,
+              content: aiReplyContent,
+              author: newReply.authorName || "Unknown Author",
+              date: new Date().toISOString(),
+            },
+          ],
         };
-        
+
         onCommentUpdate(updatedComment);
-        setAIReplyContent('');
+        setAIReplyContent("");
         setIsAIReplyModalVisible(false);
-        message.success('Reply added and comment resolved');
+        message.success("Reply added and comment resolved");
       });
     } catch (error) {
-      console.error('Error adding direct reply:', error);
-      message.error('Failed to add reply: ' + error.message);
+      console.error("Error adding direct reply:", error);
+      message.error("Failed to add reply: " + error.message);
     }
   };
 
   return (
     <>
-      <div className="comment-actions-grid">
+      <div className="flex justify-end gap-4 p-4">
         <Button
           icon={<EditOutlined />}
           onClick={() => setIsRedraftModalVisible(true)}
@@ -357,13 +366,20 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
       {/* Generated Redraft Card */}
       {generatedRedraft && (
         <div className="redraft-result-card mt-4 p-4 bg-white shadow-sm border border-gray-200">
-          <div className="text-sm text-gray-600 mb-2">AI Generated Redraft:</div>
+          <div className="text-sm text-gray-600 mb-2">
+            AI Generated Redraft:
+          </div>
           <div className="max-h-[200px] overflow-y-auto mb-4">
             <TextArea
               value={generatedRedraft.text}
-              onChange={e => setGeneratedRedraft(prev => ({ ...prev, text: e.target.value }))}
-              onKeyPress={e => {
-                if (e.key === 'Enter' && !e.shiftKey) {
+              onChange={(e) =>
+                setGeneratedRedraft((prev) => ({
+                  ...prev,
+                  text: e.target.value,
+                }))
+              }
+              onKeyPress={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
                   handleAcceptRedraft();
                 }
@@ -373,31 +389,31 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
             />
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <Button 
-              size="small" 
+            <Button
+              size="small"
               onClick={handleRejectRedraft}
               className="hover:bg-red-600 hover:border-red-600"
             >
               Reject
             </Button>
-            <Button 
-              size="small" 
+            <Button
+              size="small"
               onClick={handleRegenerateRedraft}
               className="hover:bg-blue-600 hover:border-blue-600 transition-colors"
             >
               Regenerate
             </Button>
-            <Button 
-              size="small" 
-              type="primary" 
+            <Button
+              size="small"
+              type="primary"
               onClick={handleAcceptAndResolve}
               className="hover:bg-green-600 hover:border-green-600 transition-colors"
             >
               Accept & Resolve
             </Button>
-            <Button 
-              size="small" 
-              type="primary" 
+            <Button
+              size="small"
+              type="primary"
               onClick={handleAcceptAndComment}
               className="hover:bg-green-600 hover:border-green-600 transition-colors"
             >
@@ -414,9 +430,9 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
           <div className="max-h-[200px] overflow-y-auto mb-4">
             <TextArea
               value={generatedReply}
-              onChange={e => setGeneratedReply(e.target.value)}
-              onKeyPress={e => {
-                if (e.key === 'Enter' && !e.shiftKey) {
+              onChange={(e) => setGeneratedReply(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
                   handleAcceptGeneratedReply();
                 }
@@ -426,29 +442,29 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
             />
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <Button 
-              size="small" 
+            <Button
+              size="small"
               onClick={handleRejectGeneratedReply}
               className="hover:bg-red-600 hover:border-red-600 transition-colors"
             >
               Reject
             </Button>
-            <Button 
-              size="small" 
+            <Button
+              size="small"
               onClick={handleRegenerateAIReply}
               className="hover:bg-blue-600 hover:border-blue-600 transition-colors"
             >
               Regenerate
             </Button>
-            <Button 
-              size="small" 
-              type="primary" 
+            <Button
+              size="small"
+              type="primary"
               onClick={handleAcceptGeneratedReply}
               className="hover:bg-green-600 hover:border-green-600 transition-colors"
             >
               Accept
             </Button>
-            <div></div> {/* Empty div to maintain grid alignment */}
+            <div></div>
           </div>
         </div>
       )}
@@ -464,7 +480,7 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
         open={isAIReplyModalVisible}
         onCancel={() => {
           setIsAIReplyModalVisible(false);
-          setAIReplyContent('');
+          setAIReplyContent("");
         }}
         footer={
           <div className="flex justify-end space-x-2">
@@ -474,7 +490,7 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
             >
               Reply
             </Button>
-            <Button 
+            <Button
               type="primary"
               icon={<CheckCircleOutlined />}
               onClick={handleAIReply}
@@ -491,8 +507,8 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
           ref={replyTextAreaRef}
           rows={5}
           value={aiReplyContent}
-          onChange={e => setAIReplyContent(e.target.value)}
-          onKeyPress={e => handleKeyPress(e, 'aiReply')}
+          onChange={(e) => setAIReplyContent(e.target.value)}
+          onKeyPress={(e) => handleKeyPress(e, "aiReply")}
           placeholder="Give instructions for your reply..."
           className="ai-reply-textarea"
         />
@@ -509,10 +525,10 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
         open={isRedraftModalVisible}
         onCancel={() => {
           setIsRedraftModalVisible(false);
-          setRedraftContent('');
+          setRedraftContent("");
         }}
         footer={
-          <Button 
+          <Button
             type="primary"
             icon={<CheckCircleOutlined />}
             onClick={handleRedraft}
@@ -528,8 +544,8 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
           ref={redraftTextAreaRef}
           rows={5}
           value={redraftContent}
-          onChange={e => setRedraftContent(e.target.value)}
-          onKeyPress={e => handleKeyPress(e, 'redraft')}
+          onChange={(e) => setRedraftContent(e.target.value)}
+          onKeyPress={(e) => handleKeyPress(e, "redraft")}
           placeholder="Give instructions for your redraft..."
           className="redraft-textarea"
         />
