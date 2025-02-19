@@ -7,9 +7,9 @@ import {
   CheckCircleOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import { replyToComment, redraftComment } from "../../api";
-import { searchAndReplaceText } from "../utils/wordUtils";
-import { logger } from "../../api";
+import { replyToComment, redraftComment } from "../../../api";
+import { searchAndReplaceText } from "../../utils/wordUtils";
+import { logger } from "../../../api";
 const { TextArea } = Input;
 
 const CommentActions = React.memo(({ comment, onCommentUpdate }) => {

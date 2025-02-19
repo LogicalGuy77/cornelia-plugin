@@ -25,9 +25,9 @@ import {
   MessageOutlined,
   BulbOutlined,
 } from "@ant-design/icons";
-import { logger, redraftComment, brainstormChat } from "../../api";
-import { searchAndReplaceText } from "../utils/wordUtils";
-import ChatWindow from "./views/ChatWindowView";
+import { logger, redraftComment, brainstormChat } from "../../../api";
+import { searchAndReplaceText } from "../../utils/wordUtils";
+import ChatWindow from "../views/ChatWindowView";
 
 const { Panel } = Collapse;
 const { Text, Title, Paragraph } = Typography;

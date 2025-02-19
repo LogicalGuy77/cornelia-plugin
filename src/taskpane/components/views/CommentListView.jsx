@@ -16,7 +16,7 @@ import {
   UndoOutlined,
   CaretRightOutlined,
 } from "@ant-design/icons";
-import CommentActions from "../CommentActions";
+import CommentActions from "./CommentActions";
 
 const { Text } = Typography;
 const { Panel } = Collapse;

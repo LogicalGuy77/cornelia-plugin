@@ -1,7 +1,7 @@
 import React from "react";
 import { Spin, Typography, Button } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import ClauseAnalysis from "../ClauseAnalysis";
+import ClauseAnalysis from "../previews/ClauseAnalysis";
 
 const { Text } = Typography;
 
