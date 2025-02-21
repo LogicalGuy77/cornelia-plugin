@@ -314,13 +314,8 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
         newReply.load(["id", "authorName", "created"]);
         await context.sync();
 
-        // Set comment as resolved
-        targetComment.resolved = true;
-        await context.sync();
-
         const updatedComment = {
           ...comment,
-          resolved: true,
           replies: [
             ...(comment.replies || []),
             {
@@ -335,14 +330,13 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
         onCommentUpdate(updatedComment);
         setAIReplyContent("");
         setIsAIReplyModalVisible(false);
-        message.success("Reply added and comment resolved");
+        message.success("Reply added successfully");
       });
     } catch (error) {
       console.error("Error adding direct reply:", error);
       message.error("Failed to add reply: " + error.message);
     }
   };
-
   return (
     <>
       <div className="flex justify-end gap-4 p-4">

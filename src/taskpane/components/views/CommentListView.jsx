@@ -36,6 +36,54 @@ const CommentList = React.memo(
       }
     }, [initialResolvedComments]);
 
+    const formatDate = (dateString) => {
+      try {
+        console.log("Incoming date string:", dateString);
+
+        if (!dateString) {
+          return "Date not available";
+        }
+
+        const parsedDate = new Date(dateString);
+
+        if (parsedDate instanceof Date && !isNaN(parsedDate)) {
+          return parsedDate.toLocaleString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          });
+        }
+
+        const parts = dateString.match(
+          /([A-Za-z]+ \d+, \d+) at (\d+:\d+:\d+ [AP]M) GMT([+-]\d+:\d+)/
+        );
+
+        if (parts) {
+          const [_, datePart, timePart] = parts;
+          const date = new Date(`${datePart} ${timePart}`);
+
+          if (date instanceof Date && !isNaN(date)) {
+            return date.toLocaleString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            });
+          }
+        }
+
+        return "Date not available";
+      } catch (error) {
+        console.error("Error formatting date:", error, "Input:", dateString);
+        return "Date not available";
+      }
+    };
+
     const navigateToComment = async (commentId) => {
       try {
         await Word.run(async (context) => {
@@ -79,7 +127,6 @@ const CommentList = React.memo(
               comment.resolved = true;
               await context.sync();
 
-              // Move comment to resolved list while preserving all properties
               setComments((prevComments) => {
                 const commentToMove = prevComments.find(
                   (c) => c.id === commentId
@@ -89,7 +136,7 @@ const CommentList = React.memo(
                   {
                     ...commentToMove,
                     resolved: true,
-                    content: commentToMove.content, // Ensure content is preserved
+                    content: commentToMove.content,
                   },
                 ]);
                 return prevComments.filter((c) => c.id !== commentId);
@@ -119,7 +166,6 @@ const CommentList = React.memo(
             comment.resolved = false;
             await context.sync();
 
-            // Move comment back to active list
             setResolvedComments((prevResolved) => {
               const commentToMove = prevResolved.find(
                 (c) => c.id === commentId
@@ -156,7 +202,7 @@ const CommentList = React.memo(
                     {reply.author}
                   </Text>
                   <Text type="secondary" className="text-xs ml-2">
-                    {new Date(reply.date).toLocaleString()}
+                    {formatDate(reply.date)}
                   </Text>
                 </div>
               </div>
@@ -169,31 +215,24 @@ const CommentList = React.memo(
 
     const renderCommentCard = (comment, isResolved = false) => (
       <Card className={`comment-card ${isResolved ? "resolved" : ""}`}>
-        <div className="comment-header">
+        <div className="comment-header flex justify-between items-start">
           <div className="comment-author">
-            <div className="comment-author-avatar">
-              <UserOutlined className="text-white" />
-            </div>
-            <div className="comment-author-info">
-              <Text strong className="text-sm author-name">
-                {comment.author}
-              </Text>
-              <Text type="secondary" className="text-xs date">
-                <ClockCircleOutlined className="mr-1" />
-                {new Date(comment.date).toLocaleString()}
-              </Text>
+            <div className="flex items-start gap-2">
+              <div className="comment-author-avatar">
+                <UserOutlined className="text-white" />
+              </div>
+              <div className="comment-author-info flex flex-col">
+                <Text strong className="text-sm author-name">
+                  {comment.author}
+                </Text>
+                <Text type="secondary" className="text-xs date">
+                  <ClockCircleOutlined className="mr-1" />
+                  {formatDate(comment.date)}
+                </Text>
+              </div>
             </div>
           </div>
           <div className="comment-controls">
-            {/* <Tooltip title={isResolved ? "Unresolve Comment" : "Mark as Resolved"}>
-            <Button
-              type="text"
-              size="small"
-              icon={isResolved ? <UndoOutlined /> : <CheckCircleOutlined />}
-              className={`resolve-btn ${isResolved ? 'text-green-600' : ''}`}
-              onClick={() => isResolved ? handleUnresolveComment(comment.id) : handleResolveComment(comment.id)}
-            />
-          </Tooltip> */}
             {!isResolved && (
               <Tooltip title="Mark as Resolved">
                 <Button
@@ -208,11 +247,16 @@ const CommentList = React.memo(
           </div>
         </div>
 
-        <div
-          className="comment-content-wrapper cursor-pointer hover:bg-gray-50"
-          onClick={() => navigateToComment(comment.id)}
-        >
-          <Text className="comment-text">{comment.content}</Text>
+        <div className="flex items-start gap-2 pt-1 pb-2">
+          <div className="w-8 flex-shrink-0">
+            {/* This empty div maintains spacing inline with avatar */}
+          </div>
+          <div
+            className="comment-content-wrapper flex-grow cursor-pointer hover:bg-gray-50"
+            onClick={() => navigateToComment(comment.id)}
+          >
+            <Text className="comment-text">{comment.content}</Text>
+          </div>
         </div>
 
         {renderReplyList(comment.replies)}
