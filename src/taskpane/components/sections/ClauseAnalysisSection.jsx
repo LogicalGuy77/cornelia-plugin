@@ -103,7 +103,7 @@ const ClauseAnalysisSection = ({
         throw new Error("Invalid analysis result structure");
       }
 
-      parsedResult = HARDCODED_ANALYSIS;
+      // parsedResult = HARDCODED_ANALYSIS;
       setClauseAnalysis(parsedResult);
       setClauseAnalysisCounts({
         acceptable: parsedResult.acceptable.length || 0,

@@ -11,22 +11,6 @@ import {
 } from "antd";
 import { logger } from "../../../api";
 import {
-  FileSearchOutlined,
-  MessageOutlined,
-  CommentOutlined,
-  InfoCircleOutlined,
-  EditOutlined,
-  BulbOutlined,
-  CheckCircleOutlined,
-  WarningOutlined,
-  ExclamationCircleOutlined,
-  CloseOutlined,
-  RedoOutlined,
-  CheckOutlined,
-} from "@ant-design/icons";
-import CommentList from "./CommentListView";
-import ChatWindow from "./ChatWindowView";
-import {
   SummarySection,
   ChatSection,
   ActionPanelSection,
@@ -39,8 +23,6 @@ import {
   CommentPreview,
 } from "../previews";
 import { RedraftModal, BrainStormModal } from "../modals";
-import { analyzeDocumentClauses } from "../../../api";
-import { HARDCODED_ANALYSIS } from "../constants/analysisData";
 
 const { TextArea } = Input;
 const { Text } = Typography;

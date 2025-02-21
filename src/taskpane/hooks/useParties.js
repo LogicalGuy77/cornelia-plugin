@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useDocument } from "./useDocument";
 import { HARDCODED_PARTIES } from "../components/constants/analysisData";
+import { analyzeDocumentClauses } from "../../api";
+
+// Toggle between API and hardcoded values
+const USE_HARDCODED = true; // Set to true to use hardcoded values
 
 export const useParties = () => {
   const { documentContent } = useDocument();
@@ -27,8 +31,15 @@ export const useParties = () => {
     const extractParties = async () => {
       setIsLoadingParties(true);
       try {
-        // Simulating `analyzeParties` logic
-        const parsedResult = HARDCODED_PARTIES; // Replace with real parsing if needed
+        let parsedResult;
+
+        if (USE_HARDCODED) {
+          // Use hardcoded values for testing
+          parsedResult = HARDCODED_PARTIES;
+        } else {
+          // Use API for production
+          parsedResult = await analyzeDocumentClauses(documentContent);
+        }
 
         const partiesArray = Array.isArray(parsedResult)
           ? parsedResult
