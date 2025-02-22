@@ -192,21 +192,28 @@ const CommentList = React.memo(
       if (!replies || replies.length === 0) return null;
 
       return (
-        <div className="replies-thread">
+        <div className="ml-8 mt-3 space-y-3 border-l-2 border-gray-200">
           {replies.map((reply) => (
-            <div key={reply.id} className="reply-bubble">
-              <div className="reply-header">
-                <div className="reply-author">
-                  <UserOutlined className="text-gray-500" />
-                  <Text strong className="text-sm">
-                    {reply.author}
-                  </Text>
-                  <Text type="secondary" className="text-xs ml-2">
-                    {formatDate(reply.date)}
-                  </Text>
+            <div
+              key={reply.id}
+              className="pl-4 py-2 hover:bg-gray-50 transition-colors duration-200"
+            >
+              <div className="flex items-center mb-2">
+                <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center">
+                  <UserOutlined className="text-gray-500 text-sm" />
                 </div>
+                <Text strong className="text-sm ml-2">
+                  {reply.author}
+                </Text>
+                <Text
+                  type="secondary"
+                  className="text-xs ml-2 flex items-center"
+                >
+                  <ClockCircleOutlined className="mr-1" />
+                  {formatDate(reply.date)}
+                </Text>
               </div>
-              <div className="reply-content">{reply.content}</div>
+              <div className="ml-8 text-sm text-gray-700">{reply.content}</div>
             </div>
           ))}
         </div>
@@ -214,32 +221,38 @@ const CommentList = React.memo(
     };
 
     const renderCommentCard = (comment, isResolved = false) => (
-      <Card className={`comment-card ${isResolved ? "resolved" : ""}`}>
-        <div className="comment-header flex justify-between items-start">
-          <div className="comment-author">
-            <div className="flex items-start gap-2">
-              <div className="comment-author-avatar">
-                <UserOutlined className="text-white" />
-              </div>
-              <div className="comment-author-info flex flex-col">
-                <Text strong className="text-sm author-name">
-                  {comment.author}
-                </Text>
-                <Text type="secondary" className="text-xs date">
-                  <ClockCircleOutlined className="mr-1" />
-                  {formatDate(comment.date)}
-                </Text>
-              </div>
+      <Card
+        className={`rounded-lg shadow-sm hover:shadow transition-all duration-200 
+      ${isResolved ? "bg-gray-50/50" : "bg-white"}`}
+      >
+        <div className="flex justify-between items-start mb-4">
+          <div className="flex items-start space-x-3">
+            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
+              <UserOutlined className="text-white" />
+            </div>
+            <div className="flex flex-col">
+              <Text strong className="text-sm">
+                {comment.author}
+              </Text>
+              <Text
+                type="secondary"
+                className="text-xs flex items-center mt-0.5"
+              >
+                <ClockCircleOutlined className="mr-1" />
+                {formatDate(comment.date)}
+              </Text>
             </div>
           </div>
-          <div className="comment-controls">
+          <div>
             {!isResolved && (
               <Tooltip title="Mark as Resolved">
                 <Button
                   type="text"
                   size="small"
-                  icon={<CheckCircleOutlined />}
-                  className="resolve-btn"
+                  icon={
+                    <CheckCircleOutlined className="text-green-600 hover:text-green-700" />
+                  }
+                  className="hover:bg-green-50 rounded-full"
                   onClick={() => handleResolveComment(comment.id)}
                 />
               </Tooltip>
@@ -247,21 +260,23 @@ const CommentList = React.memo(
           </div>
         </div>
 
-        <div className="flex items-start gap-2 pt-1 pb-2">
-          <div className="w-8 flex-shrink-0">
-            {/* This empty div maintains spacing inline with avatar */}
-          </div>
-          <div
-            className="comment-content-wrapper flex-grow cursor-pointer hover:bg-gray-50"
-            onClick={() => navigateToComment(comment.id)}
-          >
-            <Text className="comment-text">{comment.content}</Text>
-          </div>
+        <div
+          className="ml-11 p-2 rounded-md cursor-pointer hover:bg-gray-50 
+        transition-colors duration-200"
+          onClick={() => navigateToComment(comment.id)}
+        >
+          <Text className="text-gray-700">{comment.content}</Text>
         </div>
 
         {renderReplyList(comment.replies)}
+
         {!isResolved && (
-          <CommentActions comment={comment} onCommentUpdate={onCommentUpdate} />
+          <div className="mt-4 pt-3 border-t border-gray-100">
+            <CommentActions
+              comment={comment}
+              onCommentUpdate={onCommentUpdate}
+            />
+          </div>
         )}
       </Card>
     );
@@ -287,10 +302,14 @@ const CommentList = React.memo(
                 >
                   <div className="resolved-comments-scroll">
                     <List
-                      className="resolved-comment-list"
+                      className="space-y-4"
                       itemLayout="vertical"
                       dataSource={resolvedComments}
-                      renderItem={(comment) => renderCommentCard(comment, true)}
+                      renderItem={(comment) => (
+                        <div className="transition-all duration-200 mb-4">
+                          {renderCommentCard(comment, true)}
+                        </div>
+                      )}
                     />
                   </div>
                 </Panel>
@@ -300,10 +319,14 @@ const CommentList = React.memo(
         )}
 
         <List
-          className="comment-list"
+          className="space-y-4"
           itemLayout="vertical"
           dataSource={comments}
-          renderItem={(comment) => renderCommentCard(comment, false)}
+          renderItem={(comment) => (
+            <div className="transition-all duration-200 mb-4">
+              {renderCommentCard(comment, false)}
+            </div>
+          )}
         />
       </div>
     );

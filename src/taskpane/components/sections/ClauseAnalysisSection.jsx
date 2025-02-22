@@ -187,29 +187,49 @@ const ClauseAnalysisSection = ({
             </div>
 
             {selectedParty && clauseAnalysis && !clauseAnalysisLoading && (
-              <div className="flex items-center gap-6 mb-4">
-                {renderAnalysisCount({
-                  icon: (
-                    <CheckCircleOutlined className="text-md text-green-600" />
-                  ),
-                  count: clauseAnalysisCounts.acceptable,
-                  label: "Acceptable",
-                  color: "green",
-                })}
-                {renderAnalysisCount({
-                  icon: <WarningOutlined className="text-md text-yellow-600" />,
-                  count: clauseAnalysisCounts.risky,
-                  label: "Review",
-                  color: "yellow",
-                })}
-                {renderAnalysisCount({
-                  icon: (
-                    <ExclamationCircleOutlined className="text-md text-red-600" />
-                  ),
-                  count: clauseAnalysisCounts.missing,
-                  label: "Missing",
-                  color: "red",
-                })}
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                {[
+                  {
+                    icon: <CheckCircleOutlined className="text-xl" />,
+                    count: clauseAnalysisCounts.acceptable,
+                    label: "Acceptable",
+                    color: "green",
+                    description: "Clauses that meet requirements",
+                  },
+                  {
+                    icon: <WarningOutlined className="text-xl" />,
+                    count: clauseAnalysisCounts.risky,
+                    label: "Review",
+                    color: "yellow",
+                    description: "Clauses that need review",
+                  },
+                  {
+                    icon: <ExclamationCircleOutlined className="text-xl" />,
+                    count: clauseAnalysisCounts.missing,
+                    label: "Missing",
+                    color: "red",
+                    description: "Required clauses not found",
+                  },
+                ].map(({ icon, count, label, color, description }) => (
+                  <div
+                    key={label}
+                    className={`
+          flex flex-col items-center p-4 rounded-lg
+          bg-${color}-50 border border-${color}-200
+          hover:shadow-md transition-all duration-200
+          cursor-help
+        `}
+                    title={description}
+                  >
+                    <div className={`text-${color}-600 mb-2`}>{icon}</div>
+                    <span
+                      className={`text-2xl font-bold text-${color}-600 mb-1`}
+                    >
+                      {count}
+                    </span>
+                    <span className={`text-sm text-${color}-700`}>{label}</span>
+                  </div>
+                ))}
               </div>
             )}
           </div>

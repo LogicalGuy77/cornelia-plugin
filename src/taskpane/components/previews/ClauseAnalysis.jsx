@@ -364,15 +364,14 @@ const ClauseAnalysis = React.memo(
                     e.stopPropagation();
                     setActiveCommentItem(item);
                     setIsCommentModalVisible(true);
-                    // Focus the textarea after modal opens
                     setTimeout(() => {
                       commentTextAreaRef.current?.focus();
                     }, 100);
                   }}
-                  className="flex-1 min-w-[110px] flex items-center justify-center gap-1.5 !px-3 !h-8
-                  text-blue-500 hover:text-blue-600 border-blue-500 hover:border-blue-600"
+                  className="flex-1 basis-[calc(50%-4px)] min-w-[110px] flex items-center justify-center gap-1.5 !px-3 !h-8
+    text-blue-500 hover:text-blue-600 border-blue-500 hover:border-blue-600"
                 >
-                  Comment
+                  <span className="truncate">Comment</span>
                 </Button>
                 <Button
                   size="small"
@@ -380,16 +379,14 @@ const ClauseAnalysis = React.memo(
                   onClick={async (e) => {
                     e.stopPropagation();
                     setActiveBrainstormItem(item);
-                    // Fetch document content when opening modal
                     await fetchDocumentContent();
                     setIsBrainstormModalVisible(true);
-                    // Reset messages when opening new brainstorm session
                     setBrainstormMessages([]);
                   }}
-                  className="flex-1 min-w-[110px] flex items-center justify-center gap-1.5 !px-3 !h-8
-                  text-purple-500 hover:text-purple-600 border-purple-500 hover:border-purple-600"
+                  className="flex-1 basis-[calc(50%-4px)] min-w-[110px] flex items-center justify-center gap-1.5 !px-3 !h-8
+    text-purple-500 hover:text-purple-600 border-purple-500 hover:border-purple-600"
                 >
-                  Brainstorm
+                  <span className="truncate">Brainstorm</span>
                 </Button>
                 <Button
                   type="primary"
@@ -400,10 +397,10 @@ const ClauseAnalysis = React.memo(
                     handleRedraftClick(item);
                   }}
                   loading={generatingRedrafts.get(item.text)}
-                  className="flex-1 min-w-[140px] flex items-center justify-center gap-1.5 !px-3 !h-8
-                  bg-yellow-500 hover:bg-yellow-600 border-yellow-500 hover:border-yellow-600"
+                  className="flex-1 basis-full min-w-[140px] flex items-center justify-center gap-1.5 !px-3 !h-8
+    bg-yellow-500 hover:bg-yellow-600 border-yellow-500 hover:border-yellow-600"
                 >
-                  Suggest Improvements
+                  <span className="truncate">Suggest Improvements</span>
                 </Button>
               </div>
             )}
