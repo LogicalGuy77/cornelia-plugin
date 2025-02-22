@@ -22,15 +22,28 @@ export const useSummary = (documentContent) => {
 
     setLoading(true);
     setSummaryError(null);
+    setSummaryProgress(0);
+
     try {
+      // Start a progress simulation
+      let simulatedProgress = 0;
+      const progressInterval = setInterval(() => {
+        if (simulatedProgress < 90) {
+          // Only simulate up to 90%
+          simulatedProgress += Math.random() * 10; // Random increment between 0-10
+          setSummaryProgress(Math.min(Math.round(simulatedProgress), 90));
+        }
+      }, 500); // Update every 500ms
+
       const result = await performAnalysis(
         "shortSummary",
         documentContent,
-        "document",
-        (fileName, percent) => {
-          setSummaryProgress(percent);
-        }
+        "document"
       );
+
+      // Clear the interval and set to 100% when complete
+      clearInterval(progressInterval);
+      setSummaryProgress(100);
 
       if (result) {
         setSummary(result);
@@ -42,7 +55,8 @@ export const useSummary = (documentContent) => {
       setSummaryError(error.message || "Analysis failed");
     } finally {
       setLoading(false);
-      setSummaryProgress(0);
+      // Don't reset progress to 0 immediately - let it show 100% briefly
+      setTimeout(() => setSummaryProgress(0), 500);
     }
   };
 

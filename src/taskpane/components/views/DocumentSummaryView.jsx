@@ -129,7 +129,7 @@ const DocumentSummary = ({
           ) : (
             <div className="w-64">
               <Progress
-                percent={100}
+                percent={0}
                 status="active"
                 strokeColor="#108ee9"
                 className="opacity-50"
