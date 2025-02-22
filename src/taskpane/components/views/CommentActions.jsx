@@ -512,7 +512,7 @@ const CommentActions = React.memo(({ comment, onCommentUpdate }) => {
       <Modal
         title={
           <div className="modal-title">
-            <MessageOutlined className="modal-icon" />
+            <EditOutlined className="modal-icon mr-2" />
             <span>Redraft with Cornelia</span>
           </div>
         }
